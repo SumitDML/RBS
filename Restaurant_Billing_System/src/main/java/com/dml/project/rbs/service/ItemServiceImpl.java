@@ -6,6 +6,12 @@ import com.dml.project.rbs.entity.Item;
 import com.dml.project.rbs.model.response.BuyItemResponse;
 import com.dml.project.rbs.repository.BuyItemRepository;
 import com.dml.project.rbs.repository.ItemRepository;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +21,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,6 +41,8 @@ public class ItemServiceImpl implements ItemService{
 
 
     public int totalBill = 0;
+
+    public boolean flag = true;
 
     @Override
     public Item addItems(Item item) {
@@ -57,32 +69,46 @@ public class ItemServiceImpl implements ItemService{
             return item;
         }
         else{
-            throw new NoSuchElementException("No Item Found with name : "+name);
+            return null;
+            //throw new NoSuchElementException("No Item Found with name : "+name);
         }
 
     }
 
     public String deleteItemById(long id) {
         Item item = itemRepository.findById(id).orElse(null);
-        if(item==null) throw new NoSuchElementException("Item with Id:"+id+"not Found!");
+        if(item==null){
+            return null;
+        }
         itemRepository.deleteById(id);
         return "Item Deleted with id:"+id ;
     }
 
-    public BuyItemResponse buyFoodItems(List<BuyItem> buyItem){
+    public BuyItemResponse buyFoodItems(List<BuyItem> buyItem) {
 
-        buyItem.forEach(buyitem ->{
-                     String name = buyitem.getName();
-                     Item item = itemRepository.findByName(name);
-                     int total = buyitem.getQty()*item.getPrice();
-                     totalBill = totalBill +total;
-                     buyitem.setPrice(item.getPrice());
-                     buyitem.setAmount(total);
-              });
+        List<BuyItem> boughtItems = null;
+        try {
+            buyItem.forEach(buyitem -> {
 
-      List<BuyItem> boughtItems =  buyItemRepository.saveAll(buyItem);
+                String name = buyitem.getName();
+                Item item = itemRepository.findByName(name);
+                int total = buyitem.getQty() * item.getPrice();
+                totalBill = totalBill + total;
+                buyitem.setPrice(item.getPrice());
+                buyitem.setAmount(total);
+            });
 
-      return new BuyItemResponse(boughtItems,totalBill);
+
+            boughtItems = buyItemRepository.saveAll(buyItem);
+
+
+        } catch (Exception e){
+            totalBill=0;
+            return null;
+        }
+
+
+        return new BuyItemResponse(boughtItems, totalBill);
 
 
     }
@@ -97,7 +123,7 @@ public class ItemServiceImpl implements ItemService{
     public Item updateItem(Item item){
         Item existingItem = itemRepository.findById(item.getId()).orElse(null);
         if(existingItem == null){
-            throw new NoSuchElementException("No Item Found!");
+            return null;
         }
         existingItem.setId(item.getId());
         existingItem.setDesc(item.getDesc());

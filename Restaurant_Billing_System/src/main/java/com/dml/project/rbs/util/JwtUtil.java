@@ -16,7 +16,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
-    private static final int TOKEN_VALIDITY = 60 * 60 * 1000;
+    private static final int TOKEN_VALIDITY = 60  * 1000;
 
     private static final String secret_key ="Secret_Key_RBS";
 
@@ -48,7 +48,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setClaims(claims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 10))
                 .signWith(SignatureAlgorithm.HS512, secret_key).compact();
     }
 

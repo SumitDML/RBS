@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Builder
-public class Item implements Serializable {
+public class Item implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

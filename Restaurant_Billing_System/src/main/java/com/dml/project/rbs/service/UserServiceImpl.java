@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService{
     }
 
     public String getEncryptedPassword(String password){
+
         return passwordEncoder.encode(password);
     }
 

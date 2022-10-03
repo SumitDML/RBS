@@ -41,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/RBS/login").permitAll()
                 .antMatchers("/RBS/register").permitAll()
+                .antMatchers("/RBS/QRCode").permitAll()
                 .antMatchers(HttpHeaders.ALLOW) .permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -52,6 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
+
         return new BCryptPasswordEncoder();
     }
 

@@ -5,15 +5,16 @@ package com.dml.project.rbs.service;
 import com.dml.project.rbs.entity.BuyItem;
 import com.dml.project.rbs.entity.Item;
 import com.dml.project.rbs.model.response.BuyItemResponse;
+import com.google.zxing.WriterException;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.http.ResponseEntity;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 
 public interface ItemService  {
-
     public List<Item> getItems();
     public Item addItems(Item item);
     public List<Item> addAllItems(List<Item> item);
