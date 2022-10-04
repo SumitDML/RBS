@@ -62,11 +62,14 @@ public class ItemServiceImpl implements ItemService{
 
         return itemRepository.findById(id).orElse(null);
     }
-    public Item getItemsByName(String name){
+    public List<Item> getItemsByName(String name){
 
-        Item item = itemRepository.findByName(name);
-        if(item!=null){
-            return item;
+        List<Item> items = itemRepository.startsWithName(name);
+
+
+       // Item item = itemRepository.findByName(name);
+        if(items!=null){
+            return items;
         }
         else{
             return null;

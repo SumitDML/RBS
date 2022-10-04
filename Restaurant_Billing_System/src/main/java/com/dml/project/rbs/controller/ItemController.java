@@ -86,11 +86,11 @@ public class ItemController {
     public Object getItemsByName(@PathVariable String name){
         count2++;
         System.out.println("Search Item By Name Called!! "+count2);
-        Item returnValue = itemService.getItemsByName(name);
+        List<Item> returnValue = itemService.getItemsByName(name);
         if(returnValue == null){
             return new String("Item with name: "+name+"Not Found!");
         }
-        //return returnValue;
+
         return returnValue;
     }
 

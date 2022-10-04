@@ -19,7 +19,7 @@ public interface ItemService  {
     public Item addItems(Item item);
     public List<Item> addAllItems(List<Item> item);
     public Item getItemsById(long id);
-    public Item getItemsByName(String name);
+    public List<Item> getItemsByName(String name);
     public String deleteItemById(long id);
     public Item updateItem(Item item);
     public BuyItemResponse buyFoodItems(List<BuyItem> buyItemRequest);
