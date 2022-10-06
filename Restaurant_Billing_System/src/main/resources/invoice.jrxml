@@ -3,6 +3,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RestaurantBill" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="831580e2-9d15-4e86-a459-7077a2e97b8b">
     <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
     <parameter name="total" class="java.lang.Integer"/>
+    <parameter name="uname" class="java.lang.String" />
     <queryString>
         <![CDATA[]]>
     </queryString>
@@ -15,7 +16,7 @@
         <band splitType="Stretch"/>
     </background>
     <title>
-        <band height="102" splitType="Stretch">
+        <band height="108" splitType="Stretch">
             <rectangle>
                 <reportElement x="0" y="0" width="555" height="102" backcolor="#999999" uuid="f3facd00-6337-44ae-a21f-a34aaf0b9b71"/>
                 <graphicElement>
@@ -30,7 +31,7 @@
                 <text><![CDATA[Restaurant Bill]]></text>
             </staticText>
             <image>
-                <reportElement x="0" y="20" width="300" height="64" uuid="364088ce-4def-4633-bde3-bbaf415e08fc"/>
+                <reportElement x="0" y="0" width="300" height="64" uuid="364088ce-4def-4633-bde3-bbaf415e08fc"/>
                 <imageExpression><![CDATA["/home/dml-sumit/Downloads/DigiMantra-Labs-logo-design-New (1).png"]]></imageExpression>
             </image>
             <textField pattern="MMMMM dd, yyyy">
@@ -46,6 +47,20 @@
                     <font size="16" isBold="true"/>
                 </textElement>
                 <text><![CDATA[DATE: ]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="110" y="60" width="124" height="30" uuid="edbc2432-7498-4cda-82c2-5bec760d5547"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{name}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="30" y="60" width="100" height="30" uuid="b2ad0f7c-9f9e-48a9-9f7d-6bb3e5936df6"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NAME:]]></text>
             </staticText>
         </band>
     </title>
@@ -212,15 +227,15 @@
                 <reportElement x="0" y="40" width="555" height="32" backcolor="#A8A8A8" uuid="f3f9c7af-658a-43d2-8a43-6bfa7c517cdd"/>
             </rectangle>
             <staticText>
-                <reportElement x="140" y="41" width="100" height="30" uuid="42e1b226-4fa4-4d51-b699-c4ec3c2dfa26"/>
+                <reportElement x="170" y="41" width="120" height="30" uuid="42e1b226-4fa4-4d51-b699-c4ec3c2dfa26"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="16" isBold="true"/>
                 </textElement>
-                <text><![CDATA[TOTAL :]]></text>
+                <text><![CDATA[TOTAL : RS.]]></text>
             </staticText>
             <textField>
-                <reportElement x="250" y="41" width="124" height="30" uuid="f878463f-6a23-4e45-9baa-58ad293deff7"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
+                <reportElement x="290" y="41" width="114" height="30" uuid="f878463f-6a23-4e45-9baa-58ad293deff7"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
                     <font size="16" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>

@@ -64,11 +64,7 @@ public class ItemServiceImpl implements ItemService{
         if(items!=null){
             return items;
         }
-        else{
-            return null;
-            //throw new NoSuchElementException("No Item Found with name : "+name);
-        }
-
+     return null;
     }
 
     public String deleteItemById(long id) {
@@ -132,7 +128,9 @@ public class ItemServiceImpl implements ItemService{
 
     @Override
     public ResponseEntity<byte[]> generatePdf(String email) throws FileNotFoundException, JRException {
-        List<Orders> boughtItems = userRepository.findByEmail(email).getOrders();
+
+        User existingUser = userRepository.findByEmail(email);
+        List<Orders> boughtItems = existingUser.getOrders();
 
         int pdfBill = getTotalBill(boughtItems);
 
@@ -140,6 +138,7 @@ public class ItemServiceImpl implements ItemService{
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("total",pdfBill);
+        parameters.put("uname",existingUser.getFirstName());
 
         JasperReport compileReport = JasperCompileManager.compileReport(new FileInputStream("src/main/resources/invoice.jrxml"));
 
