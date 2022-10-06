@@ -18,7 +18,7 @@ public class QRController {
 
     @GetMapping("/QRCode")
     public String getQRCode(Model model){
-        String path="/home/dml-sumit/Desktop/Project/RBS/Restaurant_Billing_System/src/main/resources/templates/download.html";
+        String path="rbs-project.netlify.app";
 
 
         byte[] image = new byte[0];
