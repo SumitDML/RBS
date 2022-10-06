@@ -1,5 +1,6 @@
 package com.dml.project.rbs.service;
 
+import com.dml.project.rbs.entity.Orders;
 import com.dml.project.rbs.entity.Role;
 import com.dml.project.rbs.entity.User;
 import com.dml.project.rbs.repository.RoleRepository;
@@ -9,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -61,6 +63,24 @@ public class UserServiceImpl implements UserService{
         adminRoles.add(adminRole);
         adminUser.setRole(adminRoles);
         userRepository.save(adminUser);
+
+    }
+
+    @Override
+    public User userProfile(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public String clearOrderHistory(String email) {
+
+        User existingUser =  userRepository.findByEmail(email);
+        List<Orders> ordersList = existingUser.getOrders();
+        ordersList.removeAll(ordersList);
+        existingUser.setOrders(ordersList);
+
+        userRepository.save(existingUser);
+
+            return "Order History Cleared!";
 
     }
 }

@@ -2,9 +2,11 @@ package com.dml.project.rbs.controller;
 
 import com.dml.project.rbs.entity.User;
 import com.dml.project.rbs.model.request.SignUpRequest;
+import com.dml.project.rbs.repository.OrdersRepository;
 import com.dml.project.rbs.service.ItemService;
 import com.dml.project.rbs.service.UserService;
 import com.dml.project.rbs.service.UserServiceImpl;
+import com.dml.project.rbs.util.JwtUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,11 @@ public class UserController {
     UserService userService;
 
     @Autowired
-    ItemService itemService;
+    JwtUtil jwtUtil;
+
+    @Autowired
+    OrdersRepository ordersRepository;
+
 
     @PostConstruct
     public void initRolesController(){
@@ -43,6 +49,27 @@ public class UserController {
         }
         return new ResponseEntity(user1,HttpStatus.OK);
     }
+    @PreAuthorize("hasAnyRole('Admin','User')")
+    @GetMapping({"/getUserDetails"})
+    public ResponseEntity<Object> userProfile(@RequestHeader("Authorization") String TokenHeader){
+        String jwtToken = TokenHeader.substring(7);
+        String email = jwtUtil.extractEmailFromToken(jwtToken);
+        User returnValue = userService.userProfile(email);
+        return new ResponseEntity(returnValue,HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyRole('Admin','User')")
+    @PutMapping({"/clearOrderHistory"})
+    public ResponseEntity<Object> clearRecord(@RequestHeader("Authorization") String TokenHeader){
+        String jwtToken = TokenHeader.substring(7);
+        String email = jwtUtil.extractEmailFromToken(jwtToken);
+        String returnValue = userService.clearOrderHistory(email);
+
+        return new ResponseEntity(returnValue,HttpStatus.OK);
+    }
+
+
+
 
 
 }

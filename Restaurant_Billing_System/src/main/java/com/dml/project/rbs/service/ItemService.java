@@ -23,7 +23,7 @@ public interface ItemService  {
     public BuyItemResponse buyFoodItems(List<Orders> ordersRequest, String email);
 
     public ResponseEntity<byte[]> generatePdf(String email) throws FileNotFoundException, JRException;
-    public List<Orders> listBoughtItems();
+    public List<Orders> listBoughtItems(String email);
 
 
 }

@@ -6,6 +6,7 @@ import com.dml.project.rbs.model.response.BuyItemResponse;
 import com.dml.project.rbs.service.ItemService;
 import com.dml.project.rbs.util.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
+import org.bouncycastle.math.raw.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
@@ -132,10 +134,14 @@ public class ItemController {
     @Cacheable("BuyList")
     @GetMapping(path = "/GetAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public List<Orders> ListBoughtItems(){
+    public List<Orders> ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
+        String jwtToken = TokenHeader.substring(7);
+
+        String email = jwtUtil.extractEmailFromToken(jwtToken);
+
         sleep(1);
         System.out.println("Buy List Called!");
-        return  itemService.listBoughtItems();
+        return  itemService.listBoughtItems(email);
     }
 
     @GetMapping("/pdf")
@@ -154,6 +160,12 @@ public class ItemController {
         catch (InterruptedException e){
             e.printStackTrace();
         }
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public String exceptionHandlerGeneric(Model m){
+        m.addAttribute("msg","Exception has Occured!");
+        return null;
     }
 
 }

@@ -106,10 +106,9 @@ public class ItemServiceImpl implements ItemService{
     }
 
     @Override
-    public List<Orders> listBoughtItems() {
-
-
-        return ordersRepository.findAll();
+    public List<Orders> listBoughtItems(String email) {
+        User existingUser = userRepository.findByEmail(email);
+        return existingUser.getOrders();
     }
 
     public Item updateItem(Item item){

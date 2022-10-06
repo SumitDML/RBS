@@ -17,7 +17,7 @@ public class QRController {
     private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/static/QRCode.png";
 
     @GetMapping("/QRCode")
-    public String getQRCode(Model model){
+    public byte[] getQRCode(Model model){
         String path="rbs-project.netlify.app";
 
 
@@ -40,6 +40,6 @@ public class QRController {
         model.addAttribute("file",path);
         model.addAttribute("qrcode",qrcode);
 
-        return "QR Code Generated!";
+        return image;
     }
 }
