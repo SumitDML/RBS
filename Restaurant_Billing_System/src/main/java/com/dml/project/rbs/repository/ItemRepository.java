@@ -13,7 +13,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item,Long> {
     Item findByName(String name);
 
-   // @Query(value = "select * from studyiqbackend.liveclass_faculty_subject where liveclass_id=:liveclass_id", nativeQuery = true)
+
     @Query(value = "select * from items where (name like %:starts%)",nativeQuery = true)
     List<Item> startsWithName(@Param(value = "starts") String starts);
 }

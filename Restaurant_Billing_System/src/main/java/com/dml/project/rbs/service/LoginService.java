@@ -13,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -24,14 +26,27 @@ public class LoginService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public LoginResponse createJwtToken(LoginRequest loginRequest) throws  Exception{
+    public Object createJwtToken(LoginRequest loginRequest) throws  Exception{
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
+
+        User users = userRepository.findByEmail(email);
+        if(users == null) {
+            return "Invalid Email Address!";
+        }
+        else{
+            String encodedPass = userRepository.getPasswordByEmail(email);
+            if(!passwordEncoder.matches(password,encodedPass)){
+                return "Invalid Password!";
+            }
+        }
 
         authenticate(email,password);
 
@@ -70,8 +85,8 @@ public class LoginService implements UserDetailsService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email,password));
         }
         catch(BadCredentialsException e){
+
             throw new BadCredentialsException("Bad Credentials From User!");
         }
-
     }
 }

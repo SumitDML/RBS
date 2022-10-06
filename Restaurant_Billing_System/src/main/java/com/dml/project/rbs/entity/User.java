@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,12 +29,26 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE",
-    joinColumns = {
+            joinColumns = {
             @JoinColumn(name = "USER_ID")
-    },
+            },
+
             inverseJoinColumns = {
             @JoinColumn(name = "ROLE_ID")
             }
     )
-    private Set<Role> role;
+    private Set<Role> role = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinTable(name = "USER_ORDERS",
+            joinColumns = {
+                    @JoinColumn(name = "USER_ID")
+            },
+
+            inverseJoinColumns = {
+                    @JoinColumn(name = "ORDER_ID")
+            }
+    )
+    private List<Orders> orders = new ArrayList<>();
+
 }

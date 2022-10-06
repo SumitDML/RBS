@@ -1,14 +1,11 @@
 package com.dml.project.rbs.controller;
 
-import com.dml.project.rbs.entity.BuyItem;
+import com.dml.project.rbs.entity.Orders;
 import com.dml.project.rbs.entity.Item;
 import com.dml.project.rbs.model.response.BuyItemResponse;
 import com.dml.project.rbs.service.ItemService;
-import com.dml.project.rbs.service.ItemServiceImpl;
-import com.google.zxing.WriterException;
-import net.sf.jasperreports.components.barcode4j.QRCodeSVGImageProducer;
+import com.dml.project.rbs.util.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,21 +13,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 
-import com.google.zxing.WriterException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
@@ -38,6 +29,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ItemController {
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private JwtUtil jwtUtil;
     int count = 0;
     int count2 = 0;
 
@@ -82,7 +75,7 @@ public class ItemController {
     @PreAuthorize("hasAnyRole('Admin','User')")
     @GetMapping(path = "/SearchItemByName/{name}",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    @Cacheable(value = "Items",key = "#name")
+    @CacheEvict(value = "List",allEntries = true)
     public Object getItemsByName(@PathVariable String name){
         count2++;
         System.out.println("Search Item By Name Called!! "+count2);
@@ -121,9 +114,14 @@ public class ItemController {
     @PostMapping(path = "/BuyItems",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     @CacheEvict(value = "BuyItems",allEntries = true)
-    public Object buyItems(@RequestBody List<BuyItem> buyItem){
+    public Object buyItems(@RequestHeader("Authorization") String TokenHeader , @RequestBody List<Orders> orders){
 
-        BuyItemResponse returnValue =  itemService.buyFoodItems(buyItem);
+        String jwtToken = TokenHeader.substring(7);
+
+        String email = jwtUtil.extractEmailFromToken(jwtToken);
+        System.out.println(email);
+
+        BuyItemResponse returnValue =  itemService.buyFoodItems(orders,email);
         if(returnValue == null){
             return new String("Invalid Input!!");
         }
@@ -134,19 +132,19 @@ public class ItemController {
     @Cacheable("BuyList")
     @GetMapping(path = "/GetAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public List<BuyItem> ListBoughtItems(){
+    public List<Orders> ListBoughtItems(){
         sleep(1);
         System.out.println("Buy List Called!");
         return  itemService.listBoughtItems();
     }
 
     @GetMapping("/pdf")
-    @PreAuthorize("hasAnyRole('Admin')")
-    public ResponseEntity<byte[]> generatePdf() throws JRException, FileNotFoundException {
+    @PreAuthorize("hasAnyRole('Admin','User')")
+    public ResponseEntity<byte[]> generatePdf(@RequestHeader("Authorization") String TokenHeader ) throws JRException, FileNotFoundException {
+        String jwtToken = TokenHeader.substring(7);
 
-       return  itemService.generatePdf();
-
-
+        String email = jwtUtil.extractEmailFromToken(jwtToken);
+       return  itemService.generatePdf(email);
     }
 
     private void sleep(int seconds){

@@ -40,6 +40,6 @@ public class QRController {
         model.addAttribute("file",path);
         model.addAttribute("qrcode",qrcode);
 
-        return "qrcode";
+        return "QR Code Generated!";
     }
 }

@@ -1,6 +1,6 @@
 package com.dml.project.rbs.model.response;
 
-import com.dml.project.rbs.entity.BuyItem;
+import com.dml.project.rbs.entity.Orders;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BuyItemResponse {
-    private List<BuyItem> buyItem;
+    private List<Orders> orders;
     private int totalBill;
 
 }
