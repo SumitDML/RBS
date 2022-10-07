@@ -162,10 +162,5 @@ public class ItemController {
         }
     }
 
-    @ExceptionHandler(value = Exception.class)
-    public String exceptionHandlerGeneric(Model m){
-        m.addAttribute("msg","Exception has Occured!");
-        return null;
-    }
 
 }

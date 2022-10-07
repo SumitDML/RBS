@@ -49,7 +49,7 @@ public class AwsS3Controller {
     @GetMapping("/generate-upload-url")
     public ResponseEntity<String> generateUploadUrl() {
         return ResponseEntity.ok(
-                service.generatePreSignedUrl("/home/dml-sumit/Desktop/Git Codes.odt", "restaurantbill", HttpMethod.PUT));
+                service.generatePreSignedUrl("/home/dml-sumit/Desktop/Project/RBS/Restaurant_Billing_System/src/main/resources/Restaurant Bill.pdf", "restaurantbill", HttpMethod.PUT));
     }
 
 
