@@ -1,4 +1,4 @@
-package com.dml.project.rbs.config;
+package com.dml.project.rbs.exception;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;

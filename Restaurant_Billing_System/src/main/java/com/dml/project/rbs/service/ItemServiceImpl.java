@@ -4,6 +4,7 @@ package com.dml.project.rbs.service;
 import com.dml.project.rbs.entity.Orders;
 import com.dml.project.rbs.entity.Item;
 import com.dml.project.rbs.entity.User;
+import com.dml.project.rbs.exception.ItemNotFoundException;
 import com.dml.project.rbs.model.response.BuyItemResponse;
 import com.dml.project.rbs.repository.OrdersRepository;
 import com.dml.project.rbs.repository.ItemRepository;
@@ -55,22 +56,26 @@ public class ItemServiceImpl implements ItemService{
 
     public Item getItemsById(long id) {
 
-        return itemRepository.findById(id).orElse(null);
+        Item items =  itemRepository.findById(id).orElse(null);
+        if(items == null){
+            throw new ItemNotFoundException();
+        }
+        return items;
     }
     public List<Item> getItemsByName(String name){
 
         List<Item> items = itemRepository.startsWithName(name);
 
-        if(items!=null){
-            return items;
+        if(items == null || items.isEmpty()){
+            throw  new ItemNotFoundException();
         }
-     return null;
+        return items;
     }
 
     public String deleteItemById(long id) {
         Item item = itemRepository.findById(id).orElse(null);
         if(item==null){
-            return null;
+            throw new ItemNotFoundException();
         }
         itemRepository.deleteById(id);
         return "Item Deleted with id:"+id ;
@@ -114,7 +119,7 @@ public class ItemServiceImpl implements ItemService{
     public Item updateItem(Item item){
         Item existingItem = itemRepository.findById(item.getId()).orElse(null);
         if(existingItem == null){
-            return null;
+            throw new ItemNotFoundException();
         }
         existingItem.setId(item.getId());
         existingItem.setDesc(item.getDesc());

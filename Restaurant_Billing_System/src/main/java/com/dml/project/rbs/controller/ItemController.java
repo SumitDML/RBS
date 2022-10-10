@@ -67,9 +67,6 @@ public class ItemController {
         System.out.println("List All items Called!! "+count);
         List<Item> returnValue = itemService.getItems();
 
-        if(returnValue == null){
-            return new String("Items Not Available!");
-        }
         return returnValue;
        // return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
@@ -82,10 +79,6 @@ public class ItemController {
         count2++;
         System.out.println("Search Item By Name Called!! "+count2);
         List<Item> returnValue = itemService.getItemsByName(name);
-        if(returnValue == null){
-            return new String("Item with name: "+name+"Not Found!");
-        }
-
         return returnValue;
     }
 
@@ -95,10 +88,6 @@ public class ItemController {
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     public Object updateItems( @RequestBody Item item){
         Item returnValue = itemService.updateItem(item);
-        if (returnValue == null) {
-            return new String("Item with name: "+item.getName()+" Not Found!");
-
-        }
         return returnValue;
     }
 
@@ -106,9 +95,6 @@ public class ItemController {
     @DeleteMapping(path = "/DeleteItem")
     public String  deleteItems(@RequestParam Long id){
         String returnValue = itemService.deleteItemById(id);
-        if(returnValue == null){
-            return ("Item with Id:"+id+"not Found!");
-        }
         return returnValue;
     }
 

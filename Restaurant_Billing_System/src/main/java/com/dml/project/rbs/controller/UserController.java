@@ -27,9 +27,6 @@ public class UserController {
     @Autowired
     JwtUtil jwtUtil;
 
-    @Autowired
-    OrdersRepository ordersRepository;
-
 
     @PostConstruct
     public void initRolesController(){

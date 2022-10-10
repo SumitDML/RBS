@@ -18,6 +18,7 @@ public class LoginController {
 
     @PostMapping({"/login"})
     public ResponseEntity login(@RequestBody @Valid LoginRequest loginRequest) throws  Exception{
+
         Object returnValue =  loginService.createJwtToken(loginRequest);
         return new ResponseEntity(returnValue, HttpStatus.OK);
     }

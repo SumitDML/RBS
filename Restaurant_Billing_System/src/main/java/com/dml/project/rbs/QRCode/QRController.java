@@ -1,6 +1,7 @@
 package com.dml.project.rbs.QRCode;
 
 import com.google.zxing.WriterException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import java.util.Base64;
 public class QRController {
 
     private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/static/QRCode.png";
-
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping("/QRCode")
     public byte[] getQRCode(Model model){
         String path="rbs-project.netlify.app";

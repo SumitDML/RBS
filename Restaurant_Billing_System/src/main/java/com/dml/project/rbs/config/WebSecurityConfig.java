@@ -1,5 +1,6 @@
 package com.dml.project.rbs.config;
 
+import com.dml.project.rbs.exception.AuthenticationErrorHandling;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpHeaders.ALLOW) .permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .exceptionHandling().authenticationEntryPoint((AuthenticationEntryPoint) authenticationErrorHandling)
+                .exceptionHandling().authenticationEntryPoint(authenticationErrorHandling)
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
