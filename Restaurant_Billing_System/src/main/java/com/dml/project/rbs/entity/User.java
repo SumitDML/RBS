@@ -1,11 +1,13 @@
 package com.dml.project.rbs.entity;
 
+import com.twilio.type.PhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,6 +29,9 @@ public class User implements Serializable {
     private String lastName;
     @Column(name = "password")
     private String password;
+    @Column(name = "phone_number")
+    @Size(min = 10,max = 13,message = "Phone Number Should be Of 10 digits")
+    private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE",

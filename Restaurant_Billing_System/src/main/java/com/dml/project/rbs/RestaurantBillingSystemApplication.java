@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableCaching
 public class  RestaurantBillingSystemApplication {
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(RestaurantBillingSystemApplication.class, args);
 	}

@@ -30,4 +30,7 @@ public class SignUpRequest {
     @NotNull(message = "Email cannot be null")
     private String email;
 
+    @NotNull(message = "PhoneNumber should not be null")
+    private String phoneNumber;
+
 }

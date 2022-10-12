@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -38,6 +37,8 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+
+
     public String getEncryptedPassword(String password){
 
         return passwordEncoder.encode(password);
@@ -58,6 +59,7 @@ public class UserServiceImpl implements UserService{
         adminUser.setFirstName("Admin");
         adminUser.setLastName("Admin");
         adminUser.setEmail("admin@123");
+        adminUser.setPhoneNumber("+918338002929");
         adminUser.setPassword(getEncryptedPassword("admin@pass"));
         Set<Role> adminRoles = new HashSet<>();
         adminRoles.add(adminRole);
@@ -83,4 +85,5 @@ public class UserServiceImpl implements UserService{
             return "Order History Cleared!";
 
     }
+
 }
