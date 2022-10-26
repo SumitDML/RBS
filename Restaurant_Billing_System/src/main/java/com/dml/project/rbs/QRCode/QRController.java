@@ -16,7 +16,7 @@ import java.util.Base64;
 public class QRController {
 
     private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/static/QRCode.png";
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasAnyRole('Admin','User')")
     @GetMapping("/QRCode")
     public byte[] getQRCode(Model model){
         String path="rbs-project.netlify.app";

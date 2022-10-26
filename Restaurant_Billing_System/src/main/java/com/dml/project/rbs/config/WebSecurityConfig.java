@@ -47,6 +47,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/RBS/generateOtp").permitAll()
                 .antMatchers("/RBS/forgotPassword").permitAll()
                 .antMatchers("/actuator/busrefresh").permitAll()
+                .antMatchers("RBS/mypage").permitAll()
+
+
+
                 .antMatchers(HttpHeaders.ALLOW) .permitAll()
                 .anyRequest().authenticated()
                 .and()
