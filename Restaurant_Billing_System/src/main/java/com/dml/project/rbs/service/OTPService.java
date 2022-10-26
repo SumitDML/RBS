@@ -68,6 +68,7 @@ public class OTPService {
     }
 
     private String generateOtp() {
+
         return new DecimalFormat("000000").format(new Random().nextInt(999999));
     }
 
