@@ -2,28 +2,32 @@ package com.dml.project.rbs.service;
 
 
 
-import com.dml.project.rbs.entity.Orders;
-import com.dml.project.rbs.entity.Item;
+import com.dml.project.rbs.dto.OrderDto;
+import com.dml.project.rbs.dto.UpdateItemDto;
+import com.dml.project.rbs.entity.OrdersEntity;
+import com.dml.project.rbs.dto.ItemDto;
 import com.dml.project.rbs.model.response.BuyItemResponse;
+import com.dml.project.rbs.model.response.ItemResponse;
+import com.dml.project.rbs.model.response.MessageResponse;
 import net.sf.jasperreports.engine.JRException;
-import org.springframework.http.ResponseEntity;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 
 
 public interface ItemService  {
-    public List<Item> getItems();
-    public Item addItems(Item item);
-    public List<Item> addAllItems(List<Item> item);
-    public Item getItemsById(long id);
-    public List<Item> getItemsByName(String name);
-    public String deleteItemById(long id);
-    public Item updateItem(Item item);
-    public BuyItemResponse buyFoodItems(List<Orders> ordersRequest, String email);
+     ItemResponse getItems();
 
-    public ResponseEntity<byte[]> generatePdf(String email) throws FileNotFoundException, JRException;
-    public List<Orders> listBoughtItems(String email);
+     MessageResponse addItems(ItemDto itemDto);
+     MessageResponse addAllItems(List<ItemDto> itemDtos);
+     ItemDto getItemsById(long id);
+     ItemResponse getItemsByName(String name);
+     MessageResponse deleteItemById(long id);
+     MessageResponse updateItem(UpdateItemDto updateItemDto);
+     BuyItemResponse buyFoodItems(List<OrderDto> ordersEntityRequest, String email);
+
+     Object generatePdf(String email) throws FileNotFoundException, JRException;
+     List<OrderDto> listBoughtItems(String email);
 
 
 }

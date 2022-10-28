@@ -1,6 +1,6 @@
 package com.dml.project.rbs.controller;
 
-import com.dml.project.rbs.entity.Role;
+import com.dml.project.rbs.entity.RoleEntity;
 import com.dml.project.rbs.model.request.AddRoles;
 import com.dml.project.rbs.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/RBS")
+@RequestMapping("/rbs")
 public class RoleController {
     @Autowired
     private RoleService roleService;
 
     @PostMapping({"/createNewRole"})
     @PreAuthorize("hasRole('Admin')")
-    public Role createNewRole(@RequestBody Role role){
-        return roleService.createNewRole(role);
+    public RoleEntity createNewRole(@RequestBody RoleEntity roleEntity){
+        return roleService.createNewRole(roleEntity);
     }
 
     @GetMapping({"/getAllRoles"})
     @PreAuthorize("hasRole('Admin')")
-    public List<Role> getRole(){
+    public List<RoleEntity> getRole(){
         return roleService.getRoles();
     }
     @PostMapping({"/setRoles"})

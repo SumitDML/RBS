@@ -1,6 +1,5 @@
 package com.dml.project.rbs.entity;
 
-import com.twilio.type.PhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements Serializable {
+@Table(name = "user")
+public class UserEntity implements Serializable {
     @Id
     @Column(name = "email",unique = true)
     private String email;
@@ -30,7 +30,6 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
     @Column(name = "phone_number")
-    @Size(min = 10,max = 13,message = "Phone Number Should be Of 10 digits")
     private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
@@ -43,7 +42,7 @@ public class User implements Serializable {
             @JoinColumn(name = "ROLE_ID")
             }
     )
-    private Set<Role> role = new HashSet<>();
+    private Set<RoleEntity> roleEntity = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ORDERS",
@@ -55,6 +54,6 @@ public class User implements Serializable {
                     @JoinColumn(name = "ORDER_ID")
             }
     )
-    private List<Orders> orders = new ArrayList<>();
+    private List<OrdersEntity> orders = new ArrayList<>();
 
 }

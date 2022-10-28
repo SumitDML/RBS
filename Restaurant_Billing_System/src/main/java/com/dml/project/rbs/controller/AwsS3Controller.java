@@ -1,7 +1,8 @@
 package com.dml.project.rbs.controller;
 
 import com.amazonaws.HttpMethod;
-import com.dml.project.rbs.service.AwsS3Service;
+import com.dml.project.rbs.exception.UnsupportedFileException;
+import com.dml.project.rbs.service.Impl.AwsS3ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -10,20 +11,24 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.UUID;
-
 @RestController
-@RequestMapping("/RBS")
+@RequestMapping("/rbs")
 public class AwsS3Controller {
 
     @Autowired
-    private AwsS3Service service;
+    private AwsS3ServiceImpl service;
 
 
     @PreAuthorize("hasRole('Admin')")
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file) {
-        return new ResponseEntity<>(service.uploadFile(file), HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(service.uploadFile(file), HttpStatus.OK);
+        }
+        catch (Exception e){
+            throw new UnsupportedFileException();
+        }
+
     }
 
     @PreAuthorize("hasRole('Admin')")

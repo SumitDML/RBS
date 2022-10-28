@@ -1,7 +1,10 @@
 package com.dml.project.rbs.controller;
 
-import com.dml.project.rbs.entity.User;
+import com.dml.project.rbs.dto.UserProfileDto;
+import com.dml.project.rbs.entity.UserEntity;
 import com.dml.project.rbs.model.request.SignUpRequest;
+import com.dml.project.rbs.model.response.MessageResponse;
+import com.dml.project.rbs.model.response.ResponseModel;
 import com.dml.project.rbs.service.UserService;
 import com.dml.project.rbs.util.JwtUtil;
 import org.modelmapper.ModelMapper;
@@ -14,11 +17,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/RBS")
+@RequestMapping("/rbs")
 public class UserController {
     @Autowired
     private Environment env;
@@ -26,46 +31,42 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    JwtUtil jwtUtil;
 
 
     @PostConstruct
     public void initRolesController(){
+
         userService.initRolesAndUser();
     }
 
 
     @PostMapping({"/register"})
-    public ResponseEntity<Object> registerNewUser(@RequestBody @Valid SignUpRequest signUpRequest){
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+    public ResponseEntity registerNewUser(@Valid @RequestBody SignUpRequest signUpRequest){
 
-        User user = modelMapper.map(signUpRequest,User.class);
-        User user1 = userService.registerNewUser(user);
-        if(user1==null){
-            return new ResponseEntity("User Already Exist",HttpStatus.BAD_REQUEST);
+
+        try{
+            MessageResponse returnValue = userService.registerNewUser(signUpRequest);
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
         }
-        return new ResponseEntity(user1,HttpStatus.OK);
+        catch (EntityNotFoundException | ConstraintViolationException e){
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.BAD_REQUEST,e.getMessage(),null,null), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
     @GetMapping({"/getUserDetails"})
-    public ResponseEntity<Object> userProfile(@RequestHeader("Authorization") String TokenHeader){
-        String jwtToken = TokenHeader.substring(7);
-        String email = jwtUtil.extractEmailFromToken(jwtToken);
-        User returnValue = userService.userProfile(email);
-        return new ResponseEntity(returnValue,HttpStatus.OK);
+    public ResponseEntity userProfile(@RequestHeader("Authorization") String tokenheader){
+
+        UserProfileDto returnValue = userService.userProfile(tokenheader);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
     @PutMapping({"/clearOrderHistory"})
-    public ResponseEntity<Object> clearRecord(@RequestHeader("Authorization") String TokenHeader){
-        String jwtToken = TokenHeader.substring(7);
-        String email = jwtUtil.extractEmailFromToken(jwtToken);
-        String returnValue = userService.clearOrderHistory(email);
+    public ResponseEntity<Object> clearRecord(@RequestHeader("Authorization") String tokenHeader){
 
-        return new ResponseEntity(returnValue,HttpStatus.OK);
+        String returnValue = userService.clearOrderHistory(tokenHeader);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")

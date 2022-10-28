@@ -1,24 +1,16 @@
-package com.dml.project.rbs.entity;
+package com.dml.project.rbs.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.io.Serializable;
-
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Orders implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OrderDto {
     private long id;
-
     private String name;
     private int qty;
     private int price;

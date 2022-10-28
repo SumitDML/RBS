@@ -1,15 +1,18 @@
 package com.dml.project.rbs.service;
 
-import com.dml.project.rbs.entity.User;
+import com.dml.project.rbs.dto.UserProfileDto;
+import com.dml.project.rbs.entity.UserEntity;
+import com.dml.project.rbs.model.request.SignUpRequest;
+import com.dml.project.rbs.model.response.MessageResponse;
 
 public interface UserService {
-    public User registerNewUser(User user);
+    public MessageResponse registerNewUser(SignUpRequest signUpRequest);
     public String getEncryptedPassword(String password);
     public void initRolesAndUser();
 
-    public User userProfile(String email);
+    public UserProfileDto userProfile(String tokenHeader);
 
-    public String clearOrderHistory(String email);
+    public MessageResponse clearOrderHistory(String email);
 
 
 }

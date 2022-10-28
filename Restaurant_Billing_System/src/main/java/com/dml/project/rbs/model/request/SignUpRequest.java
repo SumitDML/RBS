@@ -6,8 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.intellij.lang.annotations.RegExp;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,20 +19,22 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    @NotNull(message = "First Name cannot be null")
-    @Size(min=2,message="First name must not be less than two characters")
+    @NotBlank(message = "First Name cannot be Null/Blank")
     private String firstName;
-    @NotNull(message = "last Name cannot be null")
-    @Size(min=2,message="last name must not be less than two characters")
+
+    @NotBlank(message = "last Name cannot be Null/Blank")
     private String lastName;
-    @NotNull(message = "password should not be null")
+
+    @NotBlank(message = "password should not be Null/Blank")
     @Size(min=4,max=20,message="Length must be between 8-16")
     private String password;
+
     @Email
-    @NotNull(message = "Email cannot be null")
+    @NotBlank(message = "Email cannot be Null/Blank")
     private String email;
 
-    @NotNull(message = "PhoneNumber should not be null")
+    @NotBlank(message = "PhoneNumber should not be Null/Blank")
+    @Size(min = 10,max = 13,message = "Phone Number Should be Of 10 digits")
     private String phoneNumber;
 
 }

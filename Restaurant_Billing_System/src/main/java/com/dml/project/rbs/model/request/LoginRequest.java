@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -16,10 +17,10 @@ import javax.validation.constraints.Size;
 public class LoginRequest {
 
     @Email
-    @NotNull(message = "Email cannot be null")
+    @NotBlank(message = "Email Should not be Blank!")
     private String email;
 
-    @NotNull(message = "password should not be null")
+    @NotBlank(message = "password should not be blank")
     @Size(min=8,max=16,message="Length must be between 8-16")
     private String password;
 }

@@ -41,13 +41,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors();
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/RBS/login").permitAll()
-                .antMatchers("/RBS/register").permitAll()
-                .antMatchers("/RBS/QRCode").permitAll()
-                .antMatchers("/RBS/generateOtp").permitAll()
-                .antMatchers("/RBS/forgotPassword").permitAll()
+                .antMatchers("/rbs/login").permitAll()
+                .antMatchers("/rbs/register").permitAll()
+                .antMatchers("/rbs/QRCode").permitAll()
+                .antMatchers("/rbs/generateOtp").permitAll()
+                .antMatchers("/rbs/forgotPassword").permitAll()
                 .antMatchers("/actuator/busrefresh").permitAll()
-                .antMatchers("RBS/mypage").permitAll()
+                .antMatchers("rbs/mypage").permitAll()
 
 
 

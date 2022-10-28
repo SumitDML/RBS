@@ -1,6 +1,6 @@
 package com.dml.project.rbs.config;
 
-import com.dml.project.rbs.service.LoginService;
+import com.dml.project.rbs.service.Impl.LoginServiceImpl;
 import com.dml.project.rbs.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private LoginService loginService;
+    private LoginServiceImpl loginServiceImpl;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -52,7 +52,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
 
         if(email!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-            UserDetails userDetails = loginService.loadUserByUsername(email);
+            UserDetails userDetails = loginServiceImpl.loadUserByUsername(email);
 
             if(jwtUtil.validateToken(jwtToken,userDetails)){
                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=

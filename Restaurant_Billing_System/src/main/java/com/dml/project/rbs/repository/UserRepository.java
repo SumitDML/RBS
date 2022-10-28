@@ -1,17 +1,14 @@
 package com.dml.project.rbs.repository;
 
-import com.dml.project.rbs.entity.Item;
-import com.dml.project.rbs.entity.User;
+import com.dml.project.rbs.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface UserRepository extends JpaRepository<User,String> {
-    User findByEmail(String email);
+public interface UserRepository extends JpaRepository<UserEntity,String> {
+    UserEntity findByEmail(String email);
 
     @Query(value = "select password from user where email =:Email",nativeQuery = true)
     String getPasswordByEmail(@Param(value = "Email") String email);

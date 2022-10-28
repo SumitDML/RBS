@@ -1,12 +1,19 @@
 package com.dml.project.rbs.controller;
 
-import com.dml.project.rbs.entity.Orders;
-import com.dml.project.rbs.entity.Item;
+import com.dml.project.rbs.dto.OrderDto;
+import com.dml.project.rbs.dto.UpdateItemDto;
+import com.dml.project.rbs.entity.OrdersEntity;
+import com.dml.project.rbs.entity.ItemEntity;
+import com.dml.project.rbs.exception.FileNotFoundException;
+import com.dml.project.rbs.exception.ValidationException;
+import com.dml.project.rbs.model.response.ResponseModel;
+import com.dml.project.rbs.dto.ItemDto;
 import com.dml.project.rbs.model.response.BuyItemResponse;
+import com.dml.project.rbs.model.response.ItemResponse;
+import com.dml.project.rbs.model.response.MessageResponse;
 import com.dml.project.rbs.service.ItemService;
 import com.dml.project.rbs.util.JwtUtil;
 import net.sf.jasperreports.engine.JRException;
-import org.bouncycastle.math.raw.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,10 +21,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileNotFoundException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -26,8 +33,11 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("/RBS")
+@RequestMapping("/rbs")
+@Validated
 public class ItemController {
     @Autowired
     private ItemService itemService;
@@ -38,71 +48,78 @@ public class ItemController {
 
     @PreAuthorize("hasRole('Admin')")
     @CacheEvict(value = "List",allEntries = true)
-    @PostMapping(path = "/AddItem",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
+    @PostMapping(path = "/addItem",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ResponseEntity<String> addItem(@RequestBody Item item){
-        Item returnValue = itemService.addItems(item);
+    public ResponseEntity addItem(@Valid @RequestBody ItemDto itemDto){
 
-        return new ResponseEntity(returnValue, HttpStatus.CREATED);
+        try{
+            MessageResponse returnValue = itemService.addItems(itemDto);
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.CREATED,null,null,returnValue), HttpStatus.CREATED);
+        }
+        catch (ValidationException e){
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.BAD_REQUEST,e.getMessage(),null,null), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @PreAuthorize("hasRole('Admin')")
     @CacheEvict(value = "List",allEntries = true)
-    @PostMapping(path = "/AddAllItems",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
+    @PostMapping(path = "/addAllItems",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ResponseEntity<List<Item>> addItem(@RequestBody List<Item> item){
-
-        List<Item> returnValue = itemService.addAllItems(item);
-
-        return new ResponseEntity(returnValue,HttpStatus.CREATED);
+    public ResponseEntity addItem(@Valid @RequestBody List< ItemDto> itemDtos){
+        try{
+            MessageResponse returnValue = itemService.addAllItems(itemDtos);
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.CREATED,null,null,returnValue), HttpStatus.CREATED);
+        }
+        catch (ValidationException e){
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.BAD_REQUEST,e.getMessage(),null,null), HttpStatus.BAD_REQUEST);
+        }
     }
     @PreAuthorize("hasAnyRole('Admin','User')")
     @Cacheable("List")
-    @GetMapping(path = "/ListItems",
+    @GetMapping(path = "/listItems",
             consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public Object getAllItems() {
-        sleep(1);
-        count++;
-        System.out.println("List All items Called!! "+count);
-        List<Item> returnValue = itemService.getItems();
-
-        return returnValue;
-       // return ResponseEntity.status(HttpStatus.OK).body(returnValue);
+    public ResponseEntity getAllItems() {
+//        sleep(1);
+//        count++;
+//        System.out.println("List All items Called!! "+count);
+        ItemResponse returnValue = itemService.getItems();
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @GetMapping(path = "/SearchItemByName/{name}",
+    @GetMapping(path = "/searchItemByName/{name}",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     @CacheEvict(value = "List",allEntries = true)
-    public Object getItemsByName(@PathVariable String name){
-        count2++;
-        System.out.println("Search Item By Name Called!! "+count2);
-        List<Item> returnValue = itemService.getItemsByName(name);
-        return returnValue;
+    public ResponseEntity getItemsByName(@PathVariable String name){
+//        count2++;
+//        System.out.println("Search Item By Name Called!! "+count2);
+        ItemResponse returnValue = itemService.getItemsByName(name);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('Admin')")
     @CacheEvict(value = "List",allEntries = true)
-    @PutMapping(path = "/UpdateItem",
+    @PutMapping(path = "/updateItem",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public Object updateItems( @RequestBody Item item){
-        Item returnValue = itemService.updateItem(item);
-        return returnValue;
+    public ResponseEntity updateItems(@Valid @RequestBody UpdateItemDto updateItemDto){
+        MessageResponse returnValue = itemService.updateItem(updateItemDto);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('Admin')")
-    @DeleteMapping(path = "/DeleteItem")
-    public String  deleteItems(@RequestParam Long id){
-        String returnValue = itemService.deleteItemById(id);
-        return returnValue;
+    @DeleteMapping(path = "/deleteItem")
+    public ResponseEntity  deleteItems(@RequestParam Long id){
+        MessageResponse returnValue = itemService.deleteItemById(id);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @PostMapping(path = "/BuyItems",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
+    @PostMapping(path = "/buyItems",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     @CacheEvict(value = "BuyItems",allEntries = true)
-    public Object buyItems(@RequestHeader("Authorization") String TokenHeader , @RequestBody List<Orders> orders){
+    public ResponseEntity buyItems(@RequestHeader("Authorization") String TokenHeader , @RequestBody List<OrderDto> orders){
 
         String jwtToken = TokenHeader.substring(7);
 
@@ -110,33 +127,38 @@ public class ItemController {
         System.out.println(email);
 
         BuyItemResponse returnValue =  itemService.buyFoodItems(orders,email);
-        if(returnValue == null){
-            return new String("Invalid Input!!");
-        }
-        return returnValue;
+
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
     @Cacheable("BuyList")
-    @GetMapping(path = "/GetAllBoughtItems",
+    @GetMapping(path = "/getAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public List<Orders> ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
+    public ResponseEntity ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
         String jwtToken = TokenHeader.substring(7);
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
 
         sleep(1);
         System.out.println("Buy List Called!");
-        return  itemService.listBoughtItems(email);
+        List<OrderDto> returnValue =  itemService.listBoughtItems(email);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @GetMapping("/pdf")
     @PreAuthorize("hasAnyRole('Admin','User')")
-    public ResponseEntity<byte[]> generatePdf(@RequestHeader("Authorization") String TokenHeader ) throws JRException, FileNotFoundException {
+    public ResponseEntity generatePdf(@RequestHeader("Authorization") String TokenHeader ) {
         String jwtToken = TokenHeader.substring(7);
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
-       return  itemService.generatePdf(email);
+        try {
+            Object returnValue =  itemService.generatePdf(email);
+            return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+        }
+        catch(FileNotFoundException | java.io.FileNotFoundException | JRException e){
+            throw new FileNotFoundException("Some Error Occurred while generating PDF!");
+        }
     }
 
     private void sleep(int seconds){
@@ -147,6 +169,5 @@ public class ItemController {
             e.printStackTrace();
         }
     }
-
 
 }
