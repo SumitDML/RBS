@@ -133,7 +133,13 @@ public class ItemServiceImpl implements ItemService {
 
         items.forEach(item -> {
             if(!item.isDeleted())
+            {
                 itemDtoList.add(modelMapper.map(item,ItemDto.class));
+            }
+            else{
+                throw  new ItemNotFoundException("Item with name "+name+" Does not exists!");
+            }
+
         });
 
         return new ItemResponse(itemDtoList,items.size()+" items Found!");
@@ -149,20 +155,23 @@ public class ItemServiceImpl implements ItemService {
         return new MessageResponse("Item Deleted with id:"+id);
     }
 
-    public BuyItemResponse buyFoodItems(List<OrderDto> orders, String email) {
+    public BuyItemResponse buyFoodItems(List<OrderDto> orderDto, String email) {
 
         UserEntity existingUserEntity = userRepository.findByEmail(email);
-
+        
+        
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        
+        List<OrdersEntity> orderEntity = new ArrayList<>();
+    
 
-        List<OrdersEntity> ordersEntityList = new ArrayList<>();
-
-        orders.forEach(ordersDto -> {
-                ordersEntityList.add(modelMapper.map(orders,OrdersEntity.class));
+        orderDto.forEach(order -> {
+            orderEntity.add(modelMapper.map(order,OrdersEntity.class));
         });
 
 
-            ordersEntityList.forEach(buyitem -> {
+
+        orderEntity.forEach(buyitem -> {
                 String name = buyitem.getName();
                 ItemEntity itemEntity = itemRepository.findByName(name);
                 if(itemEntity.isDeleted() || itemEntity==null){
@@ -174,14 +183,14 @@ public class ItemServiceImpl implements ItemService {
             });
 
 
-            existingUserEntity.setOrders(ordersEntityList);
+            existingUserEntity.setOrders(orderEntity);
             userRepository.save(existingUserEntity);
 
 
 
-        int bill = getTotalBill(ordersEntityList);
+        int bill = getTotalBill(orderEntity);
 
-        return new BuyItemResponse(ordersEntityList.size()+" Items Bought!", bill);
+        return new BuyItemResponse(orderEntity.size()+" Items Bought!", bill);
 
 
     }
@@ -248,9 +257,8 @@ public class ItemServiceImpl implements ItemService {
 
             return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(data);
         }
-        return "User Has No Orders Yet!";
 
-
+        throw  new ItemNotFoundException("User Has No Orders Yet!");
 
     }
 

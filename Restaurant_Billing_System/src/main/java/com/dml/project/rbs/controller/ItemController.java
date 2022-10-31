@@ -1,5 +1,6 @@
 package com.dml.project.rbs.controller;
 
+import com.dml.project.rbs.dto.CustomResponseEntity;
 import com.dml.project.rbs.dto.OrderDto;
 import com.dml.project.rbs.dto.UpdateItemDto;
 import com.dml.project.rbs.entity.OrdersEntity;
@@ -80,12 +81,13 @@ public class ItemController {
     @GetMapping(path = "/listItems",
             consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ResponseEntity getAllItems() {
+    public CustomResponseEntity getAllItems() {
 //        sleep(1);
 //        count++;
 //        System.out.println("List All items Called!! "+count);
         ItemResponse returnValue = itemService.getItems();
-        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+        return new CustomResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
@@ -135,7 +137,7 @@ public class ItemController {
     @Cacheable("BuyList")
     @GetMapping(path = "/getAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ResponseEntity ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
+    public CustomResponseEntity ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
         String jwtToken = TokenHeader.substring(7);
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
@@ -143,18 +145,18 @@ public class ItemController {
         sleep(1);
         System.out.println("Buy List Called!");
         List<OrderDto> returnValue =  itemService.listBoughtItems(email);
-        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+        return new CustomResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @GetMapping("/pdf")
     @PreAuthorize("hasAnyRole('Admin','User')")
-    public ResponseEntity generatePdf(@RequestHeader("Authorization") String TokenHeader ) {
+    public Object generatePdf(@RequestHeader("Authorization") String TokenHeader ) {
         String jwtToken = TokenHeader.substring(7);
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
         try {
             Object returnValue =  itemService.generatePdf(email);
-            return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+            return returnValue;
         }
         catch(FileNotFoundException | java.io.FileNotFoundException | JRException e){
             throw new FileNotFoundException("Some Error Occurred while generating PDF!");

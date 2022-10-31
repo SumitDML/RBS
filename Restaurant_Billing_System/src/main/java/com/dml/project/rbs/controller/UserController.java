@@ -65,7 +65,7 @@ public class UserController {
     @PutMapping({"/clearOrderHistory"})
     public ResponseEntity<Object> clearRecord(@RequestHeader("Authorization") String tokenHeader){
 
-        String returnValue = userService.clearOrderHistory(tokenHeader);
+        MessageResponse returnValue = userService.clearOrderHistory(tokenHeader);
         return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
