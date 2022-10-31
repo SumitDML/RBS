@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.util.Base64;
 
 @RestController
-@RequestMapping("/RBS")
+@RequestMapping("/rbs")
 public class QRController {
 
     private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/static/QRCode.png";
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @GetMapping("/QRCode")
+    @GetMapping("/qrCode")
     public byte[] getQRCode(Model model){
         String path="rbs-project.netlify.app";
 

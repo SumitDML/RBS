@@ -9,12 +9,14 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-public class ItemDto {
+public class ItemDto implements Serializable {
 
     private Long id;
 

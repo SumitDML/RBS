@@ -16,7 +16,7 @@ import java.util.List;
 
 
 public interface ItemService  {
-     ItemResponse getItems();
+     ItemResponse getItems(Integer pageNumber,Integer pageSize);
 
      MessageResponse addItems(ItemDto itemDto);
      MessageResponse addAllItems(List<ItemDto> itemDtos);

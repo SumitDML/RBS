@@ -43,13 +43,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/rbs/login").permitAll()
                 .antMatchers("/rbs/register").permitAll()
-                .antMatchers("/rbs/QRCode").permitAll()
+                .antMatchers("/rbs/qrCode").permitAll()
                 .antMatchers("/rbs/generateOtp").permitAll()
                 .antMatchers("/rbs/forgotPassword").permitAll()
                 .antMatchers("/actuator/busrefresh").permitAll()
-                .antMatchers("rbs/mypage").permitAll()
-
-
+                .antMatchers("/rbs/mypage").permitAll()
 
                 .antMatchers(HttpHeaders.ALLOW) .permitAll()
                 .anyRequest().authenticated()

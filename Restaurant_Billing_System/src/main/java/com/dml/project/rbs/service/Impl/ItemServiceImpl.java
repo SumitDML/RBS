@@ -20,6 +20,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -82,18 +85,24 @@ public class ItemServiceImpl implements ItemService {
 
 
 
-    public ItemResponse getItems() {
+    public ItemResponse getItems(Integer pageNumber, Integer pageSize) {
+
+        Pageable p = PageRequest.of(pageNumber,pageSize);
+
 
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<ItemEntity> itemEntity = itemRepository.findAll();
 
-        if(itemEntity==null){
+        Page<ItemEntity> pageItems = itemRepository.findAll(p);
+        List<ItemEntity> content = pageItems.getContent();
+
+
+        if(content==null){
             throw new ItemNotFoundException("No Items Found!");
         }
 
         List<ItemDto> itemDtoList = new ArrayList<>();
 
-        itemEntity.forEach(item -> {
+        content.forEach(item -> {
 
             if(!item.isDeleted())
                 itemDtoList.add(modelMapper.map(item,ItemDto.class));
@@ -119,7 +128,6 @@ public class ItemServiceImpl implements ItemService {
     }
     public ItemResponse getItemsByName(String name){
 
-
         List<ItemEntity> items = itemRepository.startsWithName(name);
 
         if(items== null || items.isEmpty()){
@@ -127,8 +135,6 @@ public class ItemServiceImpl implements ItemService {
         }
 
         List<ItemDto> itemDtoList = new ArrayList<>();
-
-
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         items.forEach(item -> {
@@ -169,12 +175,11 @@ public class ItemServiceImpl implements ItemService {
             orderEntity.add(modelMapper.map(order,OrdersEntity.class));
         });
 
-
-
-        orderEntity.forEach(buyitem -> {
+        try{
+            orderEntity.forEach(buyitem -> {
                 String name = buyitem.getName();
                 ItemEntity itemEntity = itemRepository.findByName(name);
-                if(itemEntity.isDeleted() || itemEntity==null){
+                if(itemEntity.isDeleted()){
                     throw new ItemNotFoundException(itemEntity.getName()+" is not available! Please try Again!");
                 }
                 int total = buyitem.getQty() * itemEntity.getPrice();
@@ -185,6 +190,12 @@ public class ItemServiceImpl implements ItemService {
 
             existingUserEntity.setOrders(orderEntity);
             userRepository.save(existingUserEntity);
+
+        }
+        catch (NullPointerException e){
+            throw new ItemNotFoundException("Error Occurred while buying items.Please enter the items from the menu!");
+        }
+
 
 
 

@@ -29,18 +29,17 @@ public class OTPServiceImpl implements OTPService {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Value("${twilio.account_sid}")
     String accountSid = "AC2875d1cc43ea26bdbcfa5014f58585f7";
-
+    @Value("${twilio.auth_token}")
     String authToken = "387f34134a7071de73034e616cb0ee57";
 
-
+    @Value("${twilio.trial_number}")
     String trialNumber = "+15155171695";
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    MailSender mailSender;
+
 
 
     public Object sendOtpPasswordReset(OtpRequest otpRequest) {

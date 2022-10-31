@@ -3,10 +3,11 @@ package com.dml.project.rbs.model.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseModel<T> {
+public class ResponseModel<T> implements Serializable{
 
     private final Integer status;
     private final String message;

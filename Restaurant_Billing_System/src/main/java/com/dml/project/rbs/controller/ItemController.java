@@ -1,10 +1,7 @@
 package com.dml.project.rbs.controller;
 
-import com.dml.project.rbs.dto.CustomResponseEntity;
 import com.dml.project.rbs.dto.OrderDto;
 import com.dml.project.rbs.dto.UpdateItemDto;
-import com.dml.project.rbs.entity.OrdersEntity;
-import com.dml.project.rbs.entity.ItemEntity;
 import com.dml.project.rbs.exception.FileNotFoundException;
 import com.dml.project.rbs.exception.ValidationException;
 import com.dml.project.rbs.model.response.ResponseModel;
@@ -25,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static java.lang.Thread.sleep;
@@ -81,12 +77,13 @@ public class ItemController {
     @GetMapping(path = "/listItems",
             consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public CustomResponseEntity getAllItems() {
+    public ResponseModel<ItemResponse> getAllItems(@RequestParam(value = "pageNumber",defaultValue = "0",required = false)Integer pageNumber,
+                                                   @RequestParam(value = "pageSize",defaultValue = "5",required = false)Integer pageSize) {
 //        sleep(1);
 //        count++;
 //        System.out.println("List All items Called!! "+count);
-        ItemResponse returnValue = itemService.getItems();
-        return new CustomResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+        ItemResponse returnValue = itemService.getItems(pageNumber,pageSize);
+        return  new ResponseModel<ItemResponse>(HttpStatus.OK,"","",returnValue);
 
     }
 
@@ -124,10 +121,7 @@ public class ItemController {
     public ResponseEntity buyItems(@RequestHeader("Authorization") String TokenHeader , @RequestBody List<OrderDto> orders){
 
         String jwtToken = TokenHeader.substring(7);
-
         String email = jwtUtil.extractEmailFromToken(jwtToken);
-        System.out.println(email);
-
         BuyItemResponse returnValue =  itemService.buyFoodItems(orders,email);
 
         return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
@@ -137,7 +131,7 @@ public class ItemController {
     @Cacheable("BuyList")
     @GetMapping(path = "/getAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public CustomResponseEntity ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
+    public ResponseEntity ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
         String jwtToken = TokenHeader.substring(7);
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
@@ -145,7 +139,7 @@ public class ItemController {
         sleep(1);
         System.out.println("Buy List Called!");
         List<OrderDto> returnValue =  itemService.listBoughtItems(email);
-        return new CustomResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
 
     @GetMapping("/pdf")
