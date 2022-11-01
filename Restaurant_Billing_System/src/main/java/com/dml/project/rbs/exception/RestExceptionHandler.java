@@ -53,6 +53,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(reponseModel, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = TokenValidationException.class)
+    public ResponseEntity<Object> handleTokenValidationException(TokenValidationException exception) {
+        final ResponseModel reponseModel = new ResponseModel(HttpStatus.UNAUTHORIZED, exception.getMessage(),null,null);
+        return new ResponseEntity<>(reponseModel, HttpStatus.UNAUTHORIZED);
+    }
+
+
     @ExceptionHandler(value = InvalidArgumentException.class)
     public ResponseEntity<Object> InvalidArgumentException(InvalidArgumentException exception) {
         final ResponseModel reponseModel = new ResponseModel(HttpStatus.BAD_REQUEST ,exception.getMessage(),null,null);

@@ -1,5 +1,6 @@
 package com.dml.project.rbs.config;
 
+import com.dml.project.rbs.exception.TokenValidationException;
 import com.dml.project.rbs.service.Impl.LoginServiceImpl;
 import com.dml.project.rbs.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,10 +42,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
             }
             catch (IllegalArgumentException e){
-                System.out.println("Unable To Find JWT Token");
+                throw new TokenValidationException("Unable To Find JWT Token");
             }
             catch (ExpiredJwtException e){
-                System.out.println("Jwt token is Expired");
+                throw new TokenValidationException("Jwt token is Expired");
+
             }
         }
         else {

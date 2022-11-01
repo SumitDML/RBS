@@ -73,7 +73,7 @@ public class ItemController {
         }
     }
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @Cacheable("List")
+    @Cacheable("ItemList")
     @GetMapping(path = "/listItems",
             consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
@@ -83,7 +83,7 @@ public class ItemController {
 //        count++;
 //        System.out.println("List All items Called!! "+count);
         ItemResponse returnValue = itemService.getItems(pageNumber,pageSize);
-        return  new ResponseModel<ItemResponse>(HttpStatus.OK,"","",returnValue);
+        return  new ResponseModel<ItemResponse>(HttpStatus.OK,null,null,returnValue);
 
     }
 
@@ -131,7 +131,7 @@ public class ItemController {
     @Cacheable("BuyList")
     @GetMapping(path = "/getAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ResponseEntity ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
+    public ResponseModel ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
         String jwtToken = TokenHeader.substring(7);
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
@@ -139,7 +139,7 @@ public class ItemController {
         sleep(1);
         System.out.println("Buy List Called!");
         List<OrderDto> returnValue =  itemService.listBoughtItems(email);
-        return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
+        return new ResponseModel<>(HttpStatus.OK,null,null,returnValue);
     }
 
     @GetMapping("/pdf")
