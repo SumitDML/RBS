@@ -2,8 +2,10 @@ package com.dml.project.rbs.service.Impl;
 
 import com.dml.project.rbs.Redis.RedisUtility;
 import com.dml.project.rbs.entity.UserEntity;
+import com.dml.project.rbs.exception.InvalidArgumentException;
 import com.dml.project.rbs.model.request.OtpRequest;
 import com.dml.project.rbs.model.request.ForgotPasswordRequest;
+import com.dml.project.rbs.model.response.MessageResponse;
 import com.dml.project.rbs.model.response.OTPStatus;
 import com.dml.project.rbs.model.response.OtpResponse;
 import com.dml.project.rbs.repository.UserRepository;
@@ -29,13 +31,13 @@ public class OTPServiceImpl implements OTPService {
 
     @Autowired
     private UserRepository userRepository;
-    @Value("${twilio.account_sid}")
-    String accountSid = "AC2875d1cc43ea26bdbcfa5014f58585f7";
-    @Value("${twilio.auth_token}")
-    String authToken = "387f34134a7071de73034e616cb0ee57";
+    //@Value("${twilio.account_sid}")
+    String accountSid="AC2875d1cc43ea26bdbcfa5014f58585f7";
+    //@Value("${twilio.auth_token}")
+    String authToken="f0400810ed98247777d7233ad3b95c25";
 
-    @Value("${twilio.trial_number}")
-    String trialNumber = "+15155171695";
+    //@Value("${twilio.trial_number}")
+    String trialNumber="+15155171695";
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -59,14 +61,14 @@ public class OTPServiceImpl implements OTPService {
                     redisUtility.setData(mail_key, otp);
                     return new OtpResponse(otpMessage, OTPStatus.DELIVERED);
                 } catch (Exception e) {
-                    return new OtpResponse(e.getMessage(), OTPStatus.FAILED);
+                    throw new InvalidArgumentException("Error Occured while sending OTP! Please Retry!");
                 }
             }
             else {
-                return "Invalid PhoneNumber";
+                return new MessageResponse("Invalid PhoneNumber") ;
             }
         }
-        return "Email Invalid";
+        return new MessageResponse("Email Invalid");
 
     }
 

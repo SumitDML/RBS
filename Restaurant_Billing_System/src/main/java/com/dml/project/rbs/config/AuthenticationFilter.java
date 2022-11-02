@@ -46,7 +46,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             }
             catch (ExpiredJwtException e){
                 throw new TokenValidationException("Jwt token is Expired");
-
             }
         }
         else {

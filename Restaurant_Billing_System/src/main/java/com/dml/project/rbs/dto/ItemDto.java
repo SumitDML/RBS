@@ -18,8 +18,6 @@ import java.io.Serializable;
 @Validated
 public class ItemDto implements Serializable {
 
-    private Long id;
-
     @NotBlank(message = "Name Should Not Be Blank")
     private String name;
 

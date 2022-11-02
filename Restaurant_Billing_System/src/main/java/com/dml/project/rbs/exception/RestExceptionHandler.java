@@ -42,8 +42,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ResponseModel<?>> handleValidationException(final ValidationException exception) {
-        final ResponseModel<?> reponseModel = new ResponseModel<>(HttpStatus.BAD_REQUEST, exception.getMessage(), null,null);
-        logger.error(EXCEPTION, exception);
+        final ResponseModel<?> reponseModel = new ResponseModel<>(HttpStatus.BAD_REQUEST, exception.getCause().getMessage(), null,null);
         return new ResponseEntity<>(reponseModel, HttpStatus.BAD_REQUEST);
     }
 
@@ -81,21 +80,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ResponseModel<?>> handleConstraintViolationException(final ConstraintViolationException exception) {
         final ResponseModel<?> reponseModel = new ResponseModel<>(HttpStatus.BAD_REQUEST, exception.getMessage(), null,null);
-       logger.error(EXCEPTION, exception);
         return new ResponseEntity<>(reponseModel, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<ResponseModel<?>> SQLIntegrityConstraintViolationException(final SQLIntegrityConstraintViolationException exception) {
         final ResponseModel<?> reponseModel = new ResponseModel<>(HttpStatus.BAD_REQUEST,"Duplicate Entries are being Addedd!", null,null);
-        logger.error(EXCEPTION, exception);
         return new ResponseEntity<>(reponseModel, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = FileNotFoundException.class)
     public ResponseEntity<Object> FileNotFoundException(InvalidArgumentException exception) {
         final ResponseModel reponseModel = new ResponseModel(HttpStatus.NOT_FOUND ,exception.getMessage(),null,null);
-
         return new ResponseEntity<>(reponseModel, HttpStatus.NOT_FOUND);
     }
 

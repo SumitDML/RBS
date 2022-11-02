@@ -14,7 +14,6 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<ItemEntity,Long> {
     ItemEntity findByName(String name);
 
-
     @Query(value = "select * from items where (name like %:starts%)",nativeQuery = true)
     List<ItemEntity> startsWithName(@Param(value = "starts") String starts);
 }

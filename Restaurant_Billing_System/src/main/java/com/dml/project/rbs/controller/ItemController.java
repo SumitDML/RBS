@@ -31,6 +31,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/rbs")
@@ -88,12 +89,11 @@ public class ItemController {
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @GetMapping(path = "/searchItemByName/{name}",
+    @GetMapping(path = "/searchItemByName",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     @CacheEvict(value = "List",allEntries = true)
-    public ResponseEntity getItemsByName(@PathVariable String name){
-//        count2++;
-//        System.out.println("Search Item By Name Called!! "+count2);
+    public ResponseEntity getItemsByName(@RequestParam @NotBlank(message = "Name should not be blank/null") String name){
+
         ItemResponse returnValue = itemService.getItemsByName(name);
         return new ResponseEntity(new ResponseModel<>(HttpStatus.OK,null,null,returnValue), HttpStatus.OK);
     }
@@ -118,7 +118,7 @@ public class ItemController {
     @PostMapping(path = "/buyItems",consumes = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     @CacheEvict(value = "BuyItems",allEntries = true)
-    public ResponseEntity buyItems(@RequestHeader("Authorization") String TokenHeader , @RequestBody List<OrderDto> orders){
+    public ResponseEntity buyItems(@RequestHeader("Authorization") String TokenHeader , @Valid @RequestBody List<OrderDto> orders){
 
         String jwtToken = TokenHeader.substring(7);
         String email = jwtUtil.extractEmailFromToken(jwtToken);
@@ -128,7 +128,6 @@ public class ItemController {
     }
 
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @Cacheable("BuyList")
     @GetMapping(path = "/getAllBoughtItems",
             produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_ATOM_XML_VALUE})
     public ResponseModel ListBoughtItems(@RequestHeader("Authorization") String TokenHeader){
@@ -136,9 +135,7 @@ public class ItemController {
 
         String email = jwtUtil.extractEmailFromToken(jwtToken);
 
-        sleep(1);
-        System.out.println("Buy List Called!");
-        List<OrderDto> returnValue =  itemService.listBoughtItems(email);
+        ItemResponse returnValue =  itemService.listBoughtItems(email);
         return new ResponseModel<>(HttpStatus.OK,null,null,returnValue);
     }
 

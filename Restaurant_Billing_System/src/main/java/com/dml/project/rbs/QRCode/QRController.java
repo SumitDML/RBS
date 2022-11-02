@@ -17,7 +17,7 @@ public class QRController {
 
     private static final String QR_CODE_IMAGE_PATH = "./src/main/resources/static/QRCode.png";
     @PreAuthorize("hasAnyRole('Admin','User')")
-    @GetMapping("/qr96Code")
+    @GetMapping("/qrCode")
     public byte[] getQRCode(Model model){
         String path="rbs-project.netlify.app";
 

@@ -56,13 +56,19 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public MessageResponse addItems(ItemDto itemDto) {
-
-
+        ItemEntity existingItem = itemRepository.findByName(itemDto.getName());
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        ItemEntity itemEntity = modelMapper.map(itemDto,ItemEntity.class);
+        if( existingItem != null){
+            existingItem.setDesc(itemDto.getDesc());
+            existingItem.setPrice(itemDto.getPrice());
+            existingItem.setDeleted(false);
+            itemRepository.save(existingItem);
+        }
+        else {
 
-        itemRepository.save(itemEntity);
-
+            ItemEntity itemEntity = modelMapper.map(itemDto,ItemEntity.class);
+            itemRepository.save(itemEntity);
+        }
         return new MessageResponse(itemDto.getName()+" added Successfully!!");
     }
 
@@ -108,7 +114,7 @@ public class ItemServiceImpl implements ItemService {
                 itemDtoList.add(modelMapper.map(item,ItemDto.class));
         });
 
-         return new ItemResponse(itemDtoList,itemDtoList.size()+" items found!");
+         return new ItemResponse(itemDtoList.size()+" items found!",itemDtoList);
 
     }
 
@@ -148,7 +154,7 @@ public class ItemServiceImpl implements ItemService {
 
         });
 
-        return new ItemResponse(itemDtoList,items.size()+" items Found!");
+        return new ItemResponse(items.size()+" items Found!",itemDtoList);
     }
 
     public MessageResponse deleteItemById(long id) {
@@ -207,7 +213,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<OrderDto> listBoughtItems(String email) {
+    public ItemResponse listBoughtItems(String email) {
         UserEntity existingUserEntity = userRepository.findByEmail(email);
         List<OrdersEntity> ordersEntityList =  existingUserEntity.getOrders();
 
@@ -215,7 +221,7 @@ public class ItemServiceImpl implements ItemService {
         List<OrderDto> orderDtos= new ArrayList<>();
         ordersEntityList.forEach(order -> orderDtos.add(modelMapper.map(order,OrderDto.class))
         );
-        return orderDtos;
+        return new ItemResponse(orderDtos.size()+" items found!",orderDtos);
 
     }
 
@@ -234,7 +240,7 @@ public class ItemServiceImpl implements ItemService {
         existingItemEntity.setPrice(itemEntity.getPrice());
 
         itemRepository.save(existingItemEntity);
-        return new MessageResponse("Item with Id: "+updateItemDto.getId()+"updated successfully!!");
+        return new MessageResponse("Item with Id: "+updateItemDto.getId()+" updated successfully!!");
     }
 
 

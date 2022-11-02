@@ -27,7 +27,7 @@ public interface ItemService  {
      BuyItemResponse buyFoodItems(List<OrderDto> ordersEntityRequest, String email);
 
      Object generatePdf(String email) throws FileNotFoundException, JRException;
-     List<OrderDto> listBoughtItems(String email);
+     ItemResponse listBoughtItems(String email);
 
 
 }

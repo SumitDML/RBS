@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -12,10 +14,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDto implements Serializable {
-    private long id;
+
+
+    @NotBlank(message = "Name should not be blank/null")
     private String name;
-    private int qty;
-    private int price;
-    private int amount;
+
+    @NotNull(message = "Quantity should not be blank/null")
+    private Integer qty;
+    private Integer price;
+    private Integer amount;
 
 }
