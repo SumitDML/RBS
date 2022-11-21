@@ -34,7 +34,7 @@ public class OTPServiceImpl implements OTPService {
     //@Value("${twilio.account_sid}")
     String accountSid="AC2875d1cc43ea26bdbcfa5014f58585f7";
     //@Value("${twilio.auth_token}")
-    String authToken="f0400810ed98247777d7233ad3b95c25";
+    String authToken="4241180f6990a39b8a48702fccfac034";
 
     //@Value("${twilio.trial_number}")
     String trialNumber="+15155171695";
